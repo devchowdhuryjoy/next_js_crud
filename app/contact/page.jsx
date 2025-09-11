@@ -1,8 +1,41 @@
+"use client"; // required for interactivity like onSubmit
 
+import { useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 export default function Contact() {
+  const [status, setStatus] = useState(null);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const data = {
+      name: form.name.value,
+      email: form.email.value,
+      message: form.message.value,
+    };
+
+    try {
+      const res = await fetch("/api/auth/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      const result = await res.json();
+      if (result.success) {
+        setStatus("Message sent successfully!");
+        form.reset();
+      } else {
+        setStatus(result.error || "Failed to send message");
+      }
+    } catch (err) {
+      console.error(err);
+      setStatus("Something went wrong");
+    }
+  };
+
   return (
     <div className="relative min-h-screen">
       <Navbar />
@@ -22,10 +55,11 @@ export default function Contact() {
           {/* Contact Form */}
           <div className="bg-gray-50 p-8 rounded-2xl shadow-md">
             <h2 className="text-2xl font-semibold mb-6">Send us a Message</h2>
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleSubmit}>
               <div>
                 <label className="block text-gray-700 mb-2">Your Name</label>
                 <input
+                  name="name"
                   type="text"
                   placeholder="Enter your name"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
@@ -35,6 +69,7 @@ export default function Contact() {
               <div>
                 <label className="block text-gray-700 mb-2">Your Email</label>
                 <input
+                  name="email"
                   type="email"
                   placeholder="Enter your email"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
@@ -44,6 +79,7 @@ export default function Contact() {
               <div>
                 <label className="block text-gray-700 mb-2">Message</label>
                 <textarea
+                  name="message"
                   rows="5"
                   placeholder="Write your message..."
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
@@ -57,6 +93,7 @@ export default function Contact() {
                 Send Message
               </button>
             </form>
+            {status && <p className="mt-4 text-green-600">{status}</p>}
           </div>
 
           {/* Contact Information */}
