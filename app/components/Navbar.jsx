@@ -3,15 +3,27 @@ import CustomLink from "./CustomLink";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 
 export default function Navbar() {
   const router = useRouter();
 
-   const handleLogout = () => {
-    if (confirm("Are you sure you want to logout?")) {
-      localStorage.removeItem("isLoggedIn");
-      router.push("/login");
-    }
+const handleLogout = () => {
+    Swal.fire({
+      title: "আপনি কি নিশ্চিত?",
+      text: "আপনি লগআউট করতে চান?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "হ্যাঁ, লগআউট করুন!",
+      cancelButtonText: "বাতিল"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log("User logged out");
+        Swal.fire("লগআউট!", "আপনি সফলভাবে লগআউট হয়েছেন।", "success");
+      }
+    });
   };
 
   return (
