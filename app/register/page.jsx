@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 
 export default function Register() {
   const router = useRouter();
@@ -19,20 +20,37 @@ export default function Register() {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message || "Registration failed");
+        Swal.fire({
+          icon: "error",
+          title: "Registration Failed",
+          text: data.message || "Please try again",
+        });
         return;
       }
 
-      alert("Registration successful! Please login.");
-      router.push("/login");
+      Swal.fire({
+        icon: "success",
+        title: "Registration Successful",
+        text: "Please login to continue",
+        showConfirmButton: true,
+      }).then(() => {
+        router.push("/login");
+      });
     } catch (err) {
-      alert("Server error: " + err.message);
+      Swal.fire({
+        icon: "error",
+        title: "Server Error",
+        text: err.message,
+      });
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <form onSubmit={handleSubmit} className="bg-white shadow-lg p-8 rounded-xl w-96">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white shadow-lg p-8 rounded-xl w-96"
+      >
         <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
 
         <input

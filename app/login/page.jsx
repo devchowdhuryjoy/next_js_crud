@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 
 export default function Login() {
   const router = useRouter();
@@ -19,22 +20,40 @@ export default function Login() {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message || "Login failed");
+        Swal.fire({
+          icon: "error",
+          title: "Login Failed",
+          text: data.message || "Invalid email or password",
+        });
         return;
       }
 
       localStorage.setItem("isLoggedIn", "true");
       localStorage.setItem("user", JSON.stringify(data.user));
-      alert("Login successful!");
+
+      Swal.fire({
+        icon: "success",
+        title: "Login Successful",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+
       router.push("/");
     } catch (err) {
-      alert("Server error: " + err.message);
+      Swal.fire({
+        icon: "error",
+        title: "Server Error",
+        text: err.message,
+      });
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <form onSubmit={handleSubmit} className="bg-white shadow-lg p-8 rounded-xl w-96">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white shadow-lg p-8 rounded-xl w-96"
+      >
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
 
         <input

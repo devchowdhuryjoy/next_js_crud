@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import Swal from "sweetalert2";
 
 export default function Contact() {
   const [status, setStatus] = useState(null);
@@ -24,15 +25,29 @@ export default function Contact() {
       });
 
       const result = await res.json();
+
       if (result.success) {
-        setStatus("Message sent successfully!");
+        Swal.fire({
+          icon: "success",
+          title: "Message Sent",
+          text: "Thank you for contacting us! We will get back to you soon.",
+          showConfirmButton: true,
+        });
         form.reset();
       } else {
-        setStatus(result.error || "Failed to send message");
+        Swal.fire({
+          icon: "error",
+          title: "Failed to Send",
+          text: result.error || "Something went wrong. Please try again.",
+        });
       }
     } catch (err) {
       console.error(err);
-      setStatus("Something went wrong");
+      Swal.fire({
+        icon: "error",
+        title: "Server Error",
+        text: "Something went wrong. Please try again later.",
+      });
     }
   };
 
